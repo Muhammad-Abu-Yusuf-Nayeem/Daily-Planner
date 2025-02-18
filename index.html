@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Planner</title>
+    <!-- external css -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- tailwind cdn -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <!-- font awesome cdn -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- tailwind config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              clifford: "#da373d",
+            },
+            fontFamily: {
+              manrope: ["Manrope", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Java script codes -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        function updateDateTime() {
+          const today = new Date();
+
+          // English Date
+          const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          };
+          document.getElementById("date-english").textContent =
+            today.toLocaleDateString("en-US", options);
+
+          // Get Current Time with seconds
+          const timeOptions = {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+          };
+          document.getElementById("current-time").textContent =
+            today.toLocaleTimeString("en-US", timeOptions);
+
+          // Convert to Bangla Calendar
+          document.getElementById("date-bangla").textContent =
+            getBanglaDate(today);
+
+          // Convert to Hijri Date (Islamic Calendar)
+          document.getElementById("date-hijri").textContent =
+            getHijriDate(today);
+        }
+
+        // Function to get Bangla Date
+        function getBanglaDate(date) {
+          const banglaMonths = [
+            "Boishakh",
+            "Jaistha",
+            "Asharh",
+            "Shraban",
+            "Bhadra",
+            "Ashwin",
+            "Kartik",
+            "Agrahayan",
+            "Poush",
+            "Magh",
+            "Falgun",
+            "Chaitra",
+          ];
+
+          // Bengali Calendar starts in mid-April
+          const startDate = new Date(date.getFullYear(), 3, 14); // April 14
+
+          let banglaYear = date.getFullYear() - 593; // Bengali year is ~593 years behind
+          let monthIndex = 0;
+          let banglaDay = date.getDate();
+
+          if (date >= startDate) {
+            banglaYear++;
+            const monthLengths = [
+              31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 28, 30,
+            ];
+
+            let dayCount = (date - startDate) / (1000 * 60 * 60 * 24); // Total days from 14 April
+            for (let i = 0; i < monthLengths.length; i++) {
+              if (dayCount < monthLengths[i]) {
+                monthIndex = i;
+                banglaDay = Math.floor(dayCount) + 1;
+                break;
+              }
+              dayCount -= monthLengths[i];
+            }
+          }
+
+          return `${banglaMonths[monthIndex]} ${banglaDay}, ${banglaYear}`;
+        }
+
+        // Function to get Hijri Date (Islamic Calendar)
+        function getHijriDate(date) {
+          const hijriMonths = [
+            "Muharram",
+            "Safar",
+            "Rabi' al-Awwal",
+            "Rabi' al-Thani",
+            "Jumada al-Awwal",
+            "Jumada al-Thani",
+            "Rajab",
+            "Sha'ban",
+            "Ramadan",
+            "Shawwal",
+            "Dhul-Qi'dah",
+            "Dhul-Hijjah",
+          ];
+
+          // Convert Gregorian to Hijri (approximate)
+          const hijriEpoch = new Date(622, 6, 16); // Start of Islamic calendar (July 16, 622 CE)
+          let diffDays = Math.floor(
+            (date - hijriEpoch) / (1000 * 60 * 60 * 24)
+          );
+          let hijriYear = 1 + Math.floor(diffDays / 354.367); // Islamic year is ~354 days
+          let hijriMonthIndex = Math.floor((diffDays % 354.367) / 29.53);
+          let hijriDay = Math.floor((diffDays % 354.367) % 29.53) + 1;
+
+          return `${hijriMonths[hijriMonthIndex]} ${hijriDay}, ${hijriYear} AH`;
+        }
+
+        // Update time every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+      });
+
+      //   toggle color for check box
+      function toggleColor(checkbox) {
+        const label = checkbox.parentElement;
+        label.classList.toggle("bg-red-500", !checkbox.checked);
+        label.classList.toggle("bg-green-500", checkbox.checked);
+      }
+    </script>
+    <!-- for slider -->
+    <script>
+      function updateSlider(slider, valueId) {
+        const value = slider.value;
+        const valueText = document.getElementById(valueId);
+        valueText.textContent = `Value: ${value}`;
+
+        // Set the background color based on the value
+        const color = `rgb(${value * 25.5}, ${255 - value * 25.5}, 100)`;
+        slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${
+          value * 10
+        }%, #ddd ${value * 10}%, #ddd 100%)`;
+      }
+
+      // Trigger input event initially to apply the color
+      document.getElementById("focus").dispatchEvent(new Event("input"));
+      document.getElementById("energy").dispatchEvent(new Event("input"));
+      document.getElementById("mood").dispatchEvent(new Event("input"));
+    </script>
+    <!-- word count -->
+    <script>
+      function updateCharCount(textareaId, counterId) {
+        const textarea = document.getElementById(textareaId);
+        const counter = document.getElementById(counterId);
+
+        textarea.addEventListener("input", () => {
+          counter.textContent = textarea.value.length;
+        });
+      }
+
+      // Apply character count update to all textareas
+      updateCharCount("notes", "notesCount");
+      updateCharCount("thoughts", "thoughtsCount");
+      updateCharCount("feedback", "feedbackCount");
+    </script>
+    <style>
+      legend {
+        padding: 0 10px;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="text-4xl font-bold text-center p-5">
+        My Daily Islamic Planner
+      </h1>
+      <fieldset class="flex justify-center gap-6 pb-6 font-bold text-gray-600">
+        <label>📅<span id="date-english"></span></label>
+        <label>📅<span id="date-bangla"></span></label>
+        <label>🕌 <span id="date-hijri"></span></label>
+        <label>⏰ <span id="current-time"></span></label>
+      </fieldset>
+    </header>
+    <main class="bg-[#f2efeb]">
+      <form class="container w-full p-5 grid grid-cols-3 gap-3 mx-auto">
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Morning Task</legend>
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+        </fieldset>
+        <!-- Morning -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Morning</span>
+          </legend>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+        </fieldset>
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Afternoon Task</legend>
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+        </fieldset>
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Afternoon</span>
+          </legend>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+        </fieldset>
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Evening Task</legend>
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+        </fieldset>
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Evening</span>
+          </legend>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-30">6:00 AM</label>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700"
+              placeholder="Do Something"
+            />
+          </div>
+        </fieldset>
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Plan for next day</legend>
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+        </fieldset>
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Must-do</legend>
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+          <input
+            type="text"
+            class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+            placeholder="Task 01"
+          />
+        </fieldset>
+        <!-- call email or whatsapp -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#26ccff5d] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg col-span-2"
+        >
+          <legend class="font-bold">Call, Email or Wahtsapp</legend>
+          <!-- Today -->
+          <fieldset class="border border-gray-400 p-3 rounded-md">
+            <legend class="text-md font-semibold px-2">Today</legend>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700 mb-2"
+              placeholder="Jhon Wick, versity interview"
+            />
+            <input
+              type="text"
+              class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+              placeholder="Aminul, Travel"
+            />
+          </fieldset>
+          <!-- Next day -->
+          <fieldset class="border border-gray-400 p-3 rounded-md mt-4">
+            <legend class="text-md font-semibold px-2">Next day</legend>
+            <input
+              type="text"
+              class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700 mb-2"
+              placeholder="Jhon Wick, versity interview"
+            />
+            <input
+              type="text"
+              class="bg-white rounded-sm h-8 p-3 font-normal text-gray-700"
+              placeholder="Aminul, Travel"
+            />
+          </fieldset>
+        </fieldset>
+
+        <!-- daily prayers -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-wrap gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Daily Prayers</span>
+          </legend>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Fajr</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Dhuhr</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Asr</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Maghrib</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Isha</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Witr</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Tarawih</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Tahajjud</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Nafl</span>
+          </label>
+        </fieldset>
+
+        <!-- slider -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-1 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Productivity</legend>
+
+          <!-- Focus Slider -->
+          <div class="w-full mb-8 flex flex-row flex-wrap items-center">
+            <label for="focus" class="text-center text-lg font-semibold grow-1"
+              >Focus</label
+            >
+            <div id="focusValue" class="text-center mt-0 grow-1">Value: 5</div>
+            <input
+              type="range"
+              id="focus"
+              min="0"
+              max="10"
+              value="5"
+              class="w-full h-2 rounded-lg appearance-none bg-gray-300 focus:outline-none"
+              onchange="updateSlider(this, 'focusValue')"
+            />
+          </div>
+
+          <!-- Energy Slider -->
+          <div class="w-full mb-8 flex flex-row flex-wrap items-center">
+            <label for="focus" class="text-center text-lg font-semibold grow-1"
+              >Energy</label
+            >
+            <div id="energyValue" class="text-center mt-0 grow-1">Value: 5</div>
+            <input
+              type="range"
+              id="energy"
+              min="0"
+              max="10"
+              value="5"
+              class="w-full h-2 rounded-lg appearance-none bg-gray-300 focus:outline-none"
+              onchange="updateSlider(this, 'energyValue')"
+            />
+          </div>
+
+          <!-- Mood Slider -->
+          <div class="w-full mb-0 flex flex-row flex-wrap items-center">
+            <label for="focus" class="text-center text-lg font-semibold grow-1"
+              >Mood</label
+            >
+            <div id="moodValue" class="text-center mt-0 grow-1">Value: 5</div>
+            <input
+              type="range"
+              id="mood"
+              min="0"
+              max="10"
+              value="5"
+              class="w-full h-2 rounded-lg appearance-none bg-gray-300 focus:outline-none"
+              onchange="updateSlider(this, 'moodValue')"
+            />
+          </div>
+        </fieldset>
+        <!-- workout -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-wrap gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Workout</span>
+          </legend>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Dhikr (Istighfar)</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Meditation</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Walk</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Exercise</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Loudly read</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Daily journal</span>
+          </label>
+        </fieldset>
+        <!-- Household routine -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-wrap gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Household routine</span>
+          </legend>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Make Bed</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Make Table</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Sweep Floor</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Groceries</span>
+          </label>
+        </fieldset>
+        <!-- self care -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-wrap gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Self Care</span>
+          </legend>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Brush</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Bath</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Face wash</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Take medicine</span>
+          </label>
+
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>No phone before bed</span>
+          </label>
+        </fieldset>
+        <!-- profile maintain -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-wrap gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Profile maintain</span>
+          </legend>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>GitHub</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Linked In</span>
+          </label>
+          <label
+            class="flex items-center gap-0 p-1 rounded-md bg-red-500 text-white transition-colors cursor-pointer grow-1"
+          >
+            <input
+              type="checkbox"
+              class="form-checkbox h-4 w-6"
+              onchange="toggleColor(this)"
+            />
+            <span>Facebook</span>
+          </label>
+        </fieldset>
+        <!-- Productivity Tracking -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex flex-col gap-3 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Daily Tracking</span>
+          </legend>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Study</label>
+            <input
+              type="number"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Sleep</label>
+            <input
+              type="number"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Social media</label>
+            <input
+              type="number"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Game playing</label>
+            <input
+              type="number"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Breakfast</label>
+            <input
+              type="time"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Lunch</label>
+            <input
+              type="time"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+          <div class="flex justify-start items-center">
+            <label for="" class="w-full grow-1">Dinner</label>
+            <input
+              type="time"
+              class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+              placeholder="8 Hours"
+            />
+          </div>
+        </fieldset>
+
+        <!-- Today's learning -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ffffffbd] flex flex-col gap-3 border rounded-lg border-gray-100 drop-shadow-lg"
+        >
+          <legend class="font-bold">Quran, Study, Quote</legend>
+          <div>
+            <textarea
+              id="notes"
+              maxlength="150"
+              rows="3"
+              class="w-full p-3 border text-black text-lg font-semibold rounded-md bg-white/10 backdrop-blur-md border-white/20 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2),_inset_-2px_-2px_4px_rgba(255,255,255,0.6)]"
+              placeholder="Write your ideas..."
+            ></textarea>
+          </div>
+        </fieldset>
+        <!-- New Vocabularies -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ffffffbd] flex flex-col gap-3 border rounded-lg border-gray-100 drop-shadow-lg"
+        >
+          <legend class="font-bold">New Vocabularies</legend>
+          <div>
+            <textarea
+              id="thoughts"
+              maxlength="200"
+              rows="3"
+              class="w-full p-3 border text-black text-lg font-semibold rounded-md bg-white/10 backdrop-blur-md border-white/20 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2),_inset_-2px_-2px_4px_rgba(255,255,255,0.6)]"
+              placeholder="Write your notes..."
+            ></textarea>
+          </div>
+        </fieldset>
+        <!-- Today I am thankful for -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ffffffbd] flex flex-col gap-3 border rounded-lg border-gray-100 drop-shadow-lg"
+        >
+          <legend class="font-bold">Today I am thankful for</legend>
+
+          <div>
+            <textarea
+              id="feedback"
+              maxlength="250"
+              rows="3"
+              class="w-full p-3 border text-black text-lg font-semibold rounded-md bg-white/10 backdrop-blur-md border-white/20 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2),_inset_-2px_-2px_4px_rgba(255,255,255,0.6)]"
+              placeholder="Write your thoughts..."
+            ></textarea>
+          </div>
+        </fieldset>
+
+        <button
+          class="bg-slate-600 rounded-lg px-5 py-3 my-5 font-bold text-white"
+          type="submit"
+        >
+          Submit
+        </button>
+      </form>
+    </main>
+    <footer></footer>
+  </body>
+</html>
