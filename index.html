@@ -782,7 +782,147 @@
           </div>
         </fieldset>
 
+        <!-- Today I am thankful for -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ffffffbd] flex flex-col gap-3 border rounded-lg border-gray-100 drop-shadow-lg"
+        >
+          <legend class="font-bold">Today I am thankful for</legend>
 
+          <div>
+            <textarea
+              id="feedback"
+              maxlength="250"
+              rows="3"
+              class="w-full p-3 border text-black text-lg font-semibold rounded-md bg-white/10 backdrop-blur-md border-white/20 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2),_inset_-2px_-2px_4px_rgba(255,255,255,1)]"
+              placeholder="Write your thoughts..."
+            ></textarea>
+          </div>
+        </fieldset>
+        <!-- Productivity Tracking -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#2282ff21] flex justify-around border rounded-lg border-gray-300 drop-shadow-lg col-span-2"
+        >
+          <legend class="font-bold">
+            <span class="text-red-500">Productivity Tracking</span>
+          </legend>
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-start items-center">
+              <label for="" class="w-1/2">Study</label>
+              <input
+                type="number"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 w-1/2"
+                placeholder="8 Hours"
+              />
+            </div>
+            <div class="flex justify-start items-center">
+              <label for="" class="w-1/2">Sleep</label>
+              <input
+                type="number"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 w-1/2"
+                placeholder="8 Hours"
+              />
+            </div>
+            <div class="flex justify-start items-center">
+              <label for="" class="w-1/2">Social media</label>
+              <input
+                type="number"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 w-1/2"
+                placeholder="1 Hours"
+              />
+            </div>
+            <div class="flex justify-start items-center">
+              <label for="" class="w-1/2">Game playing</label>
+              <input
+                type="number"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 w-1/2"
+                placeholder="1 Hours"
+              />
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-start items-center">
+              <label for="" class="w-full grow-1">Breakfast</label>
+              <input
+                type="time"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+                placeholder="8 Hours"
+              />
+            </div>
+            <div class="flex justify-start items-center">
+              <label for="" class="w-full grow-1">Lunch</label>
+              <input
+                type="time"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+                placeholder="8 Hours"
+              />
+            </div>
+            <div class="flex justify-start items-center">
+              <label for="" class="w-full grow-1">Dinner</label>
+              <input
+                type="time"
+                class="bg-white rounded-sm h-6 p-3 font-normal text-gray-700 grow-1"
+                placeholder="8 Hours"
+              />
+            </div>
+          </div>
+        </fieldset>
+        <!-- Mental health -->
+        <fieldset
+          class="px-6 py-6 font-bold text-center bg-[#ecf0f3] flex flex-col gap-1 border rounded-lg border-gray-300 drop-shadow-lg"
+        >
+          <legend class="font-bold">Mental health</legend>
+
+          <!-- Focus Slider -->
+          <div class="w-full mb-8 flex flex-row flex-wrap items-center">
+            <label for="focus" class="text-center text-lg font-semibold grow-1"
+              >Focus</label
+            >
+            <div id="focusValue" class="text-center mt-0 grow-1">Value: 5</div>
+            <input
+              type="range"
+              id="focus"
+              min="0"
+              max="10"
+              value="5"
+              class="w-full h-2 rounded-lg appearance-none bg-gray-300 focus:outline-none"
+              onchange="updateSlider(this, 'focusValue')"
+            />
+          </div>
+
+          <!-- Energy Slider -->
+          <div class="w-full mb-8 flex flex-row flex-wrap items-center">
+            <label for="focus" class="text-center text-lg font-semibold grow-1"
+              >Energy</label
+            >
+            <div id="energyValue" class="text-center mt-0 grow-1">Value: 5</div>
+            <input
+              type="range"
+              id="energy"
+              min="0"
+              max="10"
+              value="5"
+              class="w-full h-2 rounded-lg appearance-none bg-gray-300 focus:outline-none"
+              onchange="updateSlider(this, 'energyValue')"
+            />
+          </div>
+
+          <!-- Mood Slider -->
+          <div class="w-full mb-0 flex flex-row flex-wrap items-center">
+            <label for="focus" class="text-center text-lg font-semibold grow-1"
+              >Mood</label
+            >
+            <div id="moodValue" class="text-center mt-0 grow-1">Value: 5</div>
+            <input
+              type="range"
+              id="mood"
+              min="0"
+              max="10"
+              value="5"
+              class="w-full h-2 rounded-lg appearance-none bg-gray-300 focus:outline-none"
+              onchange="updateSlider(this, 'moodValue')"
+            />
+          </div>
+        </fieldset>
 
         <button
           class="bg-slate-600 rounded-lg px-5 py-3 my-5 font-bold text-white"
